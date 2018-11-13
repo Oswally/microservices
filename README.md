@@ -5,16 +5,25 @@ adicionalmente se intentará dar un ejemplo para su puesta en práctica.**
 
 Definición
 ---------------
-Toolkit que sirve como interfaz para los servicios de Amazon Cloud y la librería Boto3 de python.
+También conocido como arquitectura de microservicios, es un estilo para el desarrollo de software en la que una gran
+aplicación se construye como un conjunto de serivicios modulares, pequeños, con versiones independientes y escalables,
+que se comunican entre sí a través de protocolos estándar con interfaces bien definidas.
 
+Todo esto permite que los servicios puedan ser escritos en lenguajes independientes y administrados por equipos
+diferentes.
 
-EL objetivo principal de este repo, es la búsqueda de un CD de códigos ordenados y de rápida comprensión por ambas partes (DBI & FOX). A continuación se detallan elementos del CD de códigos que FOX pide a DBI cumplir durante todo el partnership entre ambas partes.
+Una de sus mayores ventajas es que permite el escalamiento horizontal.
+Eficientes para dar soporte a un sin fin de plataformas y dispositivos (Mobile, Web, IoT ...)
+
+## I. Casos de uso
 
 ## I. Estructura de directorios
 
-
 Estructura
 ---------------
+
+**Definición de una estructura en el README.md**
+
     .
     ├── folder_conector_01       # Carpeta para códigos de Conectores
     │   ├── code_conector_02.py                     # ?
@@ -27,6 +36,8 @@ Estructura
     ├── README.md
     └── ...
 
+Referenciando imagenes
+----------------------
 
 ![](images/arquitectura_amazon.png)
 
