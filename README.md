@@ -16,7 +16,10 @@ diferentes.
  La arquitectura de microservicios se centra en la simplificación de la tecnología para crear sistemas complejos con
  componentes optimizados. 
  
- **"bajo acoplamiento - alta cohesión"**
+**"bajo acoplamiento - alta cohesión"**
+Alta cohesión: Cada componente en la medida de lo posible debe realizar una sola función.
+Bajo acoplamiento: Cada componente debe ser independiente, es decir, un cambio en un componente no debe
+afectar/involucrar otro componente. Los componentes deben estar lo menos ligado posibles.
 
 Ventajas:
 ---------------
@@ -48,12 +51,12 @@ La encriptación se esta convirtiendo en un estandar.
 Las comunicaciones SSL son lentas.
 La encriptación es CPU intensive.
 
-si deseas encriptar la data en la capa de transmisión, se introduce significante overhead en terminos de tasas de
+Si deseas encriptar la data en la capa de transmisión, se introduce significante overhead en terminos de tasas de
 conexión y uso de CPU.
 
 Existen tres modelos de arquitectura de Red:
 -Proxy Model
-    Trafico in-bound es manejado a través de un reverse proxy/ load balancer
+    Trafico in-bound es manejado a través de un reverse proxy/load balancer
     Los servicios se comunican directamente entre sí
     A menudo con una conexión de round-robin para los DNS
     
@@ -65,24 +68,80 @@ Existen tres modelos de arquitectura de Red:
 -Fabric Model
     Enrutamiento a nivel de contenedor
     Los servicios se conectar directamente entre ellos
-    
+
+
+Principios de escalabilidad y desempeño
+----------------------------------------
+Eficiencia es de las cosas más importantes en el mundo de hoy.
+Para construir una aplicación escalable, tenemos que considerar en el diseño dos aspectos: concurrencia y
+particionamiento. La concurrencia permite que cada tarea sea dividida en piezas más pequeñas, mientras que el
+particionamiento es esencial para permitir que estas piezas más pequeñas sean procesadas en paralelo.
+Dicho esto podemos inferir que la escalabilidad esta relacionada en como dividimos y ejecutamos el procesamiento de
+tareas; y el desempeño es la medida de cuan eficientemente la aplicación procesa estas tareas.
+
+Debemos utilizar nuestros recursos de hardware de forma eficiente, ser concientes de los cuellos de botella y
+requerimientos, para así hacer una planificación de capacidad.
+
+Entender el crecimiento escalable de tu servicio conlleva dos puntos importantes: el primero es entender donde encaja
+el servicio en todo el ecosistema y que métrica de negocio se puede ver afectada; la segunda es la comprensión bien
+definida, medible y cuantitativa del tráfico que un microservicio puede manejar.
+Una medida de crecimiento de escala sería determinar la cantidad requests per seconds (RPS) o queries per seconds (QPS)
+que un servicio puede manejar, luego se debe estimar cuantas RPS/QPS va a manejar en el futuro. Una técnica podría ser
+utilizar pruebas de carga, junto al analisis del historial de trafico. El otro paso viene del entendimiento del negocio,
+es decir, luego de un análisis de crecimiento de negocio se puede identificar a nivel técnico que servicios estan
+involucrados y medir el impacto a nivel cualitativo. La medida cuantitativa de crecimiento esta estrechamente 
+relacionada con la medida cualitativa, transformando esta apreciación a algo medible en terminos de 
+  
+Uso eficiente de los recursos: CPU, memoria, almacenamiento de datos y la red son los recursos que tenemos y necesitamos
+para poner en marcha nuestra aplicación. El primer paso sería catalogar la importancia y priorización de los servicios
+claves del negocio para darle mayor cantidad de recursos. Ejm: se puede asignar un host por servicio con hardware
+dedicado pero esto podría ser un uso ineficiente del hardware y un tanto costoso. En la mayoría de los casos se podrían
+asignar diversos servicios siempre y cuando se asegure su aislamiento en cuanto a sus servicios vecinos -aquí entraría
+una tecnología como Docker. Una de las prácticas más eficientes es abstraer completamente la noción de un host y
+reemplazarlo con recursos de hardware utilizando tecnologías de extracción de recursos como Apache Mesos.
+
+Otro paso importante para que los recursos sean eficientemente asignados y distribuidos es identificar los cuellos de
+botella y los requerimientos de recursos. Por lo general estos recursos se refieren a CPU y RAM, y en ambientes
+multihilos los threads pasan a ser el tercer componente esencial.
+
+Otro punto a identificar son los cuellos de botella que puedan limitar el cremiento de nuestros servicios. Ejm: el
+número de conexiones que puede manejar una Base de Datos. Otro ejemplo sería cuando tu servicio solo puede crecer de
+forma vertical
+
+Otro aspecto importante que influye en la arquitectura de los servicios es el lenguaje de programación utilizado, si se 
+utiliza python por ejemplo, existen muchas maneras para procesar varias tareas apoyado en frameworks asyncronos como
+tornado, otra forma sería utilizar tecnologías de colas como RabbitMQ (Aunque no es muy recomendado).
+Para esta elección el equipo debe hacerse preguntas como:
+    - Como el servicio procesará las tareas.
+    - Cuan eficientemente estos servicios procesan las tareas.
+    - Y que eficiencia tendrá el servicio a medida que el número de tareas se incremente.
+
+Como se ha mencionado anteriormente el servicio debe ser pensando en terminos de concurrencia y particionamiento.
+Concurrencia: que el procesamiento de tareas se haga en paralelo en piezas de código menores.
+
+
 Que es una API: Application Programming Interface
 --------------------------------------------------
 
 Rest
-Arquitectura de aplicaciones basadas en redes, sus siglas significan REpresentational State Transfer.
+Arquitectura de aplicaciones basadas en redes, sus siglas significan **RE**presentational **S**tate **T**ransfer.
 
 Restful
 Se pudiera decir que son programas basados en REST.
 
 Rest vs Restful
-REST es una arquitectura para aplicaciones basadas en redes (como Internet), sus siglas significan REpresentational
-State Transfer y por otro lado RESTful web service o RESTful api, son programas basados en REST. Pero muchas veces se
-usan como sinónimos (REST y RESTful).
+REST es una arquitectura para aplicaciones basadas en redes (como Internet), sus siglas significan **RE**presentational
+**S**tate **T**ransfer y por otro lado RESTful web service o RESTful api, son programas basados en REST. Pero muchas
+veces se usan como sinónimos (REST y RESTful).
 
 ## I. Casos de uso
 
 ## I. Estructura de directorios
+
+Stateful vs stateless
+---------------
+Stateful es por ejemplo cuando se debe implementar una lógica donde la información de un usuario deba ser guardada en
+alguna memoria.
 
 Estructura
 ---------------
@@ -148,6 +207,7 @@ Anatomía de una URL (Uniform Resource Locator)
 ----------------------------------------------
 
 http://ejemplo.com/path/index.html?var=int#fragment1
+
 | 1 |       2     |         3     |   4  |    5    |
 
 1: Protocol
@@ -156,6 +216,8 @@ http://ejemplo.com/path/index.html?var=int#fragment1
 4: Query String, se usa para pasar datos a una BD o o algún otro tipo de almacenamiento; las variables van separadas
    por "&".
 5: Fragment
+
+Json web token (JWT)
 
 Otros patrones arquitectonicos
 -------------------------------
